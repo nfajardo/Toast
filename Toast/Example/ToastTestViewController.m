@@ -86,11 +86,9 @@
             
         case 6: {
             if (_isShowingActivity) {
-                [_activityButton setTitle:@"Hide Activity" forState:UIControlStateNormal];
-                [self.view makeToastActivity];
+                [self.view makeToast:@"This is a piece of toast with a title & image" Auto:NO ];
             } else {
-                [_activityButton setTitle:@"Show Activity" forState:UIControlStateNormal];
-                [self.view hideToastActivity];
+                [self.view hideToast];
             }
             _isShowingActivity = !_isShowingActivity;
             break;

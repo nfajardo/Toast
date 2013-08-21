@@ -46,7 +46,7 @@ static const CGFloat CSToastActivityWidth       = 100.0;
 static const CGFloat CSToastActivityHeight      = 100.0;
 static const NSString * CSToastActivityDefaultPosition = @"center";
 static const NSString * CSToastActivityViewKey  = @"CSToastActivityViewKey";
-
+static const NSString * CSToastViewKey  = @"CSToastViewKey";
 
 @interface UIView (ToastPrivate)
 
@@ -108,6 +108,58 @@ static const NSString * CSToastActivityViewKey  = @"CSToastActivityViewKey";
                                               [toast removeFromSuperview];
                                           }];
                      }];
+}
+- (void)showToast:(UIView *)toast position:(id)point {
+    toast.center = [self centerPointForPosition:point withToast:toast];
+    toast.alpha = 0.0;
+    // associate ourselves with the activity view
+    objc_setAssociatedObject (self, &CSToastViewKey, toast, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self addSubview:toast];
+    
+    [UIView animateWithDuration:CSToastFadeDuration
+                          delay:0.0
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         toast.alpha = 1.0;
+                     } completion:^(BOOL finished) {
+
+                     }];
+}
+
+
+#pragma mark - Manage Toast Manually
+
+- (void)makeToast:(NSString *)message Auto:(BOOL)_auto
+{
+    
+    if(_auto)
+    {
+        [self makeToast:message];
+    }
+    else
+    {
+        UIView *existingActivityView = (UIView *)objc_getAssociatedObject(self, &CSToastActivityViewKey);
+        if (existingActivityView != nil) return;
+        
+        existingActivityView = [self viewForMessage:message title:@"" image:nil];
+        
+        [self showToast:existingActivityView position:@"center"];
+    }
+}
+- (void)hideToast
+{
+    UIView *existingActivityView = (UIView *)objc_getAssociatedObject(self, &CSToastViewKey);
+    
+    [UIView animateWithDuration:CSToastFadeDuration
+                          delay:0.0
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         existingActivityView.alpha = 0.0;
+                     } completion:^(BOOL finished) {
+                         [existingActivityView removeFromSuperview];
+                     }];
+    
+    
 }
 
 #pragma mark - Toast Activity Methods

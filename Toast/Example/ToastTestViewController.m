@@ -85,12 +85,14 @@
         }
             
         case 6: {
-            if (_isShowingActivity) {
+            if (!_isShowingActivity) {
                 [self.view makeToast:@"This is a piece of toast with a title & image" Auto:NO ];
+                _isShowingActivity = YES;
             } else {
                 [self.view hideToast];
+                _isShowingActivity = NO;
             }
-            _isShowingActivity = !_isShowingActivity;
+            
             break;
         }
             
@@ -111,6 +113,10 @@
 - (void)viewDidUnload {
     [super viewDidUnload];
     self.activityButton = nil;
+}
+-(void) viewDidLoad
+{
+    _isShowingActivity = NO;
 }
 
 #pragma mark - Memory Management
